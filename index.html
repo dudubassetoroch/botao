@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sim ou Não</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+    body{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#071027 0%, #071a2a 100%);color:#e6eef6}
+    .wrap{width:100%;max-width:900px;padding:40px;min-height:60vh;display:flex;align-items:center;justify-content:center}
+    .card{width:100%;background:rgba(255,255,255,0.03);border-radius:14px;padding:36px;box-shadow:0 6px 30px rgba(2,6,23,0.6);position:relative;overflow:hidden}
+    .center{display:flex;flex-direction:column;align-items:center;gap:22px}
+    h1{margin:0;font-size:28px;letter-spacing:0.2px;color:#f1f7fb;text-align:center}
+    p.lead{margin:0;color:var(--muted)}
+
+    .buttons{display:flex;gap:18px;align-items:center;height:140px;position:relative;width:100%;justify-content:center}
+    button.btn{padding:14px 26px;border-radius:12px;border:0;font-size:17px;cursor:pointer;box-shadow:0 6px 18px rgba(2,6,23,0.5);transition:transform .18s cubic-bezier(.2,.9,.3,1),box-shadow .18s}
+    button.btn:active{transform:scale(.98)}
+    .btn-sim{background:linear-gradient(90deg,#06b6d4,#0ea5b7);color:#021826}
+    .btn-nao{background:linear-gradient(90deg,#ef4444,#f97316);color:white;position:absolute}
+
+    /* mensagem quando clicar sim */
+    .toast{position:fixed;left:50%;top:20px;transform:translateX(-50%);background:rgba(2,6,23,0.9);color:#fff;padding:12px 18px;border-radius:999px;box-shadow:0 8px 30px rgba(2,6,23,0.6);display:none}
+
+    @media (max-width:520px){h1{font-size:20px}.buttons{height:200px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" id="card">
+      <div class="center">
+        <h1>Vai me pagar uma?</h1>
+      
+        <div class="buttons" id="buttons">
+          <button class="btn btn-sim" id="sim">SIM</button>
+          <button class="btn btn-nao" id="nao">NÃO</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">ta me devendo uma</div>
+
+  <script>
+    const nao = document.getElementById('nao');
+    const sim = document.getElementById('sim');
+    const buttonsArea = document.getElementById('buttons');
+    const toast = document.getElementById('toast');
+
+    // Coloca o botão NÃO em um local inicial
+    function placeInitial(){
+      nao.style.left = '60%';
+      nao.style.top = '50%';
+    }
+    placeInitial();
+    window.addEventListener('resize', placeInitial);
+
+    // Função para mover o botão NÃO para posição aleatória dentro da área dos botões
+    function moverNaoRandom(){
+      const area = buttonsArea.getBoundingClientRect();
+      const naoRect = nao.getBoundingClientRect();
+      const padding = 8;
+
+      const maxX = area.width - naoRect.width - padding;
+      const maxY = area.height - naoRect.height - padding;
+
+      const x = Math.max(0, Math.floor(Math.random() * (maxX + 1)));
+      const y = Math.max(0, Math.floor(Math.random() * (maxY + 1)));
+
+      nao.style.left = x + 'px';
+      nao.style.top = y + 'px';
+    }
+
+    // Move quando o mouse passa por cima (hover) ou quando tenta clicar
+    nao.addEventListener('mouseenter', moverNaoRandom);
+    nao.addEventListener('click', (e)=>{ e.preventDefault(); moverNaoRandom(); });
+    nao.addEventListener('touchstart', (e)=>{ e.preventDefault(); moverNaoRandom(); });
+
+    // Quando clicar em SIM mostra a mensagem fixa
+    sim.addEventListener('click', ()=>{
+      toast.style.display = 'block';
+      toast.style.opacity = '1';
+      toast.animate([{transform:'translateY(-8px)', opacity:0},{transform:'translateY(0)',opacity:1}],{duration:240,easing:'cubic-bezier(.2,.9,.3,1)'});
+      setTimeout(()=>{ toast.style.display = 'none'; }, 2500);
+    });
+  </script>
+</body>
+</html>
